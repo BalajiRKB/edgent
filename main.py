@@ -6,7 +6,7 @@ Plan for Day 1 (5 Commits):
 2. [x] Commit 2: Input validation, dynamic week generation (loop-based), and error handling.
 3. [x] Commit 3: RAG setup (LlamaIndex + ChromaDB) with sample data and query helper.
 4. [x] Commit 4: Integrate RAG into roadmap generation (resources + reasoning).
-5. [ ] Commit 5: Cleanup, documentation, and manual test instructions.
+5. [x] Commit 5: Cleanup, documentation, and manual test instructions.
 """
 
 from typing import List, Optional
@@ -55,7 +55,7 @@ async def health_check():
 async def generate_roadmap(request: RoadmapRequest):
     """
     Generates a basic weekly roadmap based on the input duration.
-    Currently returns placeholder topics and resources.
+    Uses RAG to find relevant resources for the user's goal.
     """
     # Basic error handling example (though Pydantic handles the constraints above)
     if not request.goal.strip():
