@@ -5,7 +5,7 @@ Plan for Day 1 (5 Commits):
 1. [x] Commit 1: FastAPI skeleton with health check and static roadmap endpoint.
 2. [x] Commit 2: Input validation, dynamic week generation (loop-based), and error handling.
 3. [x] Commit 3: RAG setup (LlamaIndex + ChromaDB) with sample data and query helper.
-4. [ ] Commit 4: Integrate RAG into roadmap generation (resources + reasoning).
+4. [x] Commit 4: Integrate RAG into roadmap generation (resources + reasoning).
 5. [ ] Commit 5: Cleanup, documentation, and manual test instructions.
 """
 
@@ -38,6 +38,7 @@ class RoadmapWeek(BaseModel):
     topic: str
     description: str
     resources: List[str]
+    why_first: Optional[str] = None
 
 class RoadmapResponse(BaseModel):
     roadmap: List[RoadmapWeek]
@@ -60,34 +61,44 @@ async def generate_roadmap(request: RoadmapRequest):
     if not request.goal.strip():
         raise HTTPException(status_code=400, detail="Goal cannot be empty.")
 
-    # Temporary: Query RAG for the goal to see it working
-    # We will integrate this properly into weeks in Commit 4
+    # 1. Retrieve relevant resources using RAG
+    # We query for the overall goal to find the best matching documents
     rag_resources = rag_service.query_resources(request.goal)
-    # Flatten for display in the first week just to prove it works
-    rag_titles = [r["title"] for r in rag_resources]
+    
+    # Flatten resources to a list of strings (title + snippet)
+    # In a real app, we might distribute these more intelligently across weeks
+    all_resource_strings = [f"{r['title']}: {r['snippet']}" for r in rag_resources]
 
     roadmap = []
     for week_num in range(1, request.duration_weeks + 1):
-        # Simple logic to vary the content slightly
+        # 2. Generate Topic and Reasoning (Simple Logic)
         if week_num == 1:
             topic = "Foundations & Setup"
             desc = f"Setting up the environment for {request.goal} and learning basics."
-            # Attach RAG results here for now
-            current_resources = ["Official Documentation"] + rag_titles
+            why_first = "You need to understand the core concepts before moving to advanced topics."
+            # Give the most relevant resources in the first week
+            week_resources = all_resource_strings[:2] 
         elif week_num == request.duration_weeks:
             topic = "Final Project & Review"
             desc = f"Building a capstone project to demonstrate {request.goal} mastery."
-            current_resources = ["Project Guide", "Deployment Docs"]
+            why_first = "Applying knowledge in a project is the best way to solidify skills."
+            week_resources = ["Project Guide", "Deployment Docs"]
         else:
             topic = f"Intermediate Concepts (Week {week_num})"
             desc = f"Deepening understanding of {request.goal}."
-            current_resources = ["Advanced Tutorial", "Practice Exercises"]
+            why_first = "Building upon the foundations to handle more complex scenarios."
+            # Distribute remaining resources if available, or generic ones
+            if len(all_resource_strings) > 2:
+                week_resources = all_resource_strings[2:]
+            else:
+                week_resources = ["Advanced Tutorial", "Practice Exercises"]
 
         week_data = RoadmapWeek(
             week_number=week_num,
             topic=topic,
             description=desc,
-            resources=current_resources
+            resources=week_resources,
+            why_first=why_first
         )
         roadmap.append(week_data)
 
