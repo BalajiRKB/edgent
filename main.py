@@ -1,18 +1,27 @@
+"""
+Smart Learning Path Generator - Backend MVP (Day 1)
 
+Plan for Day 1 (5 Commits):
+1. [x] Commit 1: FastAPI skeleton with health check and static roadmap endpoint.
+2. [x] Commit 2: Input validation, dynamic week generation (loop-based), and error handling.
+3. [ ] Commit 3: RAG setup (LlamaIndex + ChromaDB) with sample data and query helper.
+4. [ ] Commit 4: Integrate RAG into roadmap generation (resources + reasoning).
+5. [ ] Commit 5: Cleanup, documentation, and manual test instructions.
+"""
 
 from typing import List, Optional
-from fastapi import FastAPI
-from pydantic import BaseModel
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel, Field
 
 app = FastAPI(title="Smart Learning Path Generator API")
 
 # --- Pydantic Models ---
 
 class RoadmapRequest(BaseModel):
-    current_skills: List[str]
-    goal: str
-    weekly_hours: int
-    duration_weeks: int
+    current_skills: List[str] = Field(..., description="List of current skills")
+    goal: str = Field(..., min_length=3, description="The learning goal")
+    weekly_hours: int = Field(..., ge=1, le=168, description="Hours available per week")
+    duration_weeks: int = Field(..., ge=1, le=52, description="Duration of the roadmap in weeks")
 
 class RoadmapWeek(BaseModel):
     week_number: int
@@ -34,27 +43,37 @@ async def health_check():
 @app.post("/generate-roadmap", response_model=RoadmapResponse)
 async def generate_roadmap(request: RoadmapRequest):
     """
-    Placeholder endpoint that returns a static example roadmap.
-    In future commits, this will use the input parameters and RAG to generate content.
+    Generates a basic weekly roadmap based on the input duration.
+    Currently returns placeholder topics and resources.
     """
-    # Static example data for Commit 1
-    example_week_1 = RoadmapWeek(
-        week_number=1,
-        topic="Foundations",
-        description="Introduction to the core concepts.",
-        resources=["Resource A", "Resource B"]
-    )
-    
-    example_week_2 = RoadmapWeek(
-        week_number=2,
-        topic="Advanced Topics",
-        description="Deep dive into complex areas.",
-        resources=["Resource C"]
-    )
+    # Basic error handling example (though Pydantic handles the constraints above)
+    if not request.goal.strip():
+        raise HTTPException(status_code=400, detail="Goal cannot be empty.")
+
+    roadmap = []
+    for week_num in range(1, request.duration_weeks + 1):
+        # Simple logic to vary the content slightly
+        if week_num == 1:
+            topic = "Foundations & Setup"
+            desc = f"Setting up the environment for {request.goal} and learning basics."
+        elif week_num == request.duration_weeks:
+            topic = "Final Project & Review"
+            desc = f"Building a capstone project to demonstrate {request.goal} mastery."
+        else:
+            topic = f"Intermediate Concepts (Week {week_num})"
+            desc = f"Deepening understanding of {request.goal}."
+
+        week_data = RoadmapWeek(
+            week_number=week_num,
+            topic=topic,
+            description=desc,
+            resources=["Official Documentation", "Community Tutorial"]
+        )
+        roadmap.append(week_data)
 
     return RoadmapResponse(
-        roadmap=[example_week_1, example_week_2],
-        total_weeks=2
+        roadmap=roadmap,
+        total_weeks=request.duration_weeks
     )
 
 if __name__ == "__main__":
