@@ -6,3 +6,6 @@ llama-index-embeddings-huggingface
 llama-index-vector-stores-chroma
 chromadb
 celery[redis]
+langgraph
+langchain
+langchain-openai

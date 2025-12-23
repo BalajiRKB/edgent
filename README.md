@@ -4,7 +4,7 @@
 - Containerize the application with Docker.
 - Implement async task queue with Redis and Celery.
 - Integrate persistent Vector DB (ChromaDB).
-- Add intelligent agent reasoning with LangGraph.
+- Add intelligent agent reasoning with LangGraph (multi-node workflow).
 
 ## How to Run (Docker)
 
