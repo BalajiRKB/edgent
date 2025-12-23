@@ -2,4 +2,5 @@ fastapi
 uvicorn
 pydantic
 llama-index
+llama-index-embeddings-huggingface
 chromadb

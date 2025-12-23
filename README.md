@@ -1,5 +1,26 @@
 # EDGENT-Smart Learning Path Generator (Backend MVP)
 
+## Day 2 Goals (Production & Async)
+- Containerize the application with Docker.
+- Implement async task queue with Redis and Celery.
+- Integrate persistent Vector DB (ChromaDB).
+- Add intelligent agent reasoning with LangGraph.
+
+## How to Run (Docker)
+
+1. **Build and Start Services:**
+   ```bash
+   docker compose up --build
+   ```
+
+2. **Access API Docs:**
+   Open [http://localhost:8000/docs](http://localhost:8000/docs).
+
+3. **Health Check:**
+   ```bash
+   curl http://localhost:8000/health
+   ```
+
 ## Day 1 Goals
 - Build a FastAPI backend.
 - Generate a structured weekly learning roadmap based on user input.
