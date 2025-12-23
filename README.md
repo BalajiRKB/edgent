@@ -21,6 +21,23 @@
    curl http://localhost:8000/health
    ```
 
+4. **Generate Roadmap (Async):**
+   ```bash
+   # 1. Start Task
+   curl -X POST http://localhost:8000/generate-roadmap \
+     -H "Content-Type: application/json" \
+     -d '{
+           "current_skills": ["HTML"],
+           "goal": "React",
+           "weekly_hours": 10,
+           "duration_weeks": 4
+         }'
+   # Returns: {"task_id": "...", "status": "processing"}
+
+   # 2. Poll Result (replace <task_id>)
+   curl http://localhost:8000/tasks/<task_id>
+   ```
+
 ## Day 1 Goals
 - Build a FastAPI backend.
 - Generate a structured weekly learning roadmap based on user input.

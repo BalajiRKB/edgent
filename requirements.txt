@@ -4,3 +4,4 @@ pydantic
 llama-index
 llama-index-embeddings-huggingface
 chromadb
+celery[redis]
