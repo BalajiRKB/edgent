@@ -8,4 +8,4 @@ chromadb
 celery[redis]
 langgraph
 langchain
-langchain-openai
+langchain-google-genai

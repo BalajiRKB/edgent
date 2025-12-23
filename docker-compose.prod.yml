@@ -5,10 +5,11 @@ services:
       - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - CHROMA_HOST=chromadb
-      - CHROMA_PORT=8000
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/0}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
+      - CHROMA_HOST=${CHROMA_HOST:-chromadb}
+      - CHROMA_PORT=${CHROMA_PORT:-8000}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     depends_on:
       redis:
         condition: service_healthy
@@ -20,6 +21,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
 
   redis:
     image: redis:7-alpine
@@ -30,6 +32,7 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    restart: unless-stopped
 
   chromadb:
     image: chromadb/chroma:latest
@@ -39,16 +42,18 @@ services:
       - chroma_data:/chroma/chroma
     environment:
       - IS_PERSISTENT=TRUE
+    restart: unless-stopped
 
   worker:
     build: .
     command: celery -A tasks.celery_app worker --loglevel=info
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=redis://redis:6379/0
-      - CELERY_RESULT_BACKEND=redis://redis:6379/0
-      - CHROMA_HOST=chromadb
-      - CHROMA_PORT=8000
+      - CELERY_BROKER_URL=${CELERY_BROKER_URL:-redis://redis:6379/0}
+      - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND:-redis://redis:6379/0}
+      - CHROMA_HOST=${CHROMA_HOST:-chromadb}
+      - CHROMA_PORT=${CHROMA_PORT:-8000}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
     depends_on:
       redis:
         condition: service_healthy
@@ -60,8 +65,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+    restart: unless-stopped
 
 volumes:
   chroma_data:
-
-

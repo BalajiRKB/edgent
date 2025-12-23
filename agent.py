@@ -6,8 +6,11 @@ The workflow has 3 nodes:
 1. retrieve_resources: Get relevant resources from RAG
 2. reason_prerequisites: Determine learning order and prerequisites
 3. generate_timeline: Create structured weekly roadmap
+
+Uses Google Gemini API for enhanced reasoning (optional).
 """
 
+import os
 from typing import TypedDict, List, Dict, Any
 from langgraph.graph import StateGraph, END
 import rag_service
