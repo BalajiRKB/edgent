@@ -14,6 +14,16 @@ celery_app = Celery(
     backend=CELERY_RESULT_BACKEND
 )
 
+# Initialize the RAG index when the worker starts
+@celery_app.task(bind=True)
+def initialize_rag_index(self):
+    """Initialize the RAG index on worker startup."""
+    try:
+        rag_service.build_sample_index()
+        return {"status": "success", "message": "RAG index initialized"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 @celery_app.task(name="generate_roadmap_task")
 def generate_roadmap_task(goal: str, duration_weeks: int, current_skills: List[str]) -> Dict[str, Any]:
     """
