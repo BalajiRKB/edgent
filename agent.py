@@ -13,7 +13,8 @@ Uses Google Gemini API for enhanced reasoning (optional).
 import os
 from typing import TypedDict, List, Dict, Any
 from langgraph.graph import StateGraph, END
-import rag_service
+# import rag_service
+import rag_service_mock as rag_service  # Use mock for quick testing
 
 
 class RoadmapState(TypedDict):

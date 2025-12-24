@@ -2,7 +2,8 @@ import os
 import time
 from celery import Celery
 from typing import List, Dict, Any
-import rag_service
+# import rag_service
+import rag_service_mock as rag_service  # Use mock for quick testing
 import agent
 
 # Configure Celery
