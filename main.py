@@ -1,14 +1,3 @@
-"""
-Smart Learning Path Generator - Backend MVP (Day 1)
-
-Plan for Day 1 (5 Commits):
-1. [x] Commit 1: FastAPI skeleton with health check and static roadmap endpoint.
-2. [x] Commit 2: Input validation, dynamic week generation (loop-based), and error handling.
-3. [x] Commit 3: RAG setup (LlamaIndex + ChromaDB) with sample data and query helper.
-4. [x] Commit 4: Integrate RAG into roadmap generation (resources + reasoning).
-5. [x] Commit 5: Cleanup, documentation, and manual test instructions.
-"""
-
 from typing import List, Optional, Any
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel, Field
